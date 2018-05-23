@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask import Flask, request, abort, jsonify
 import os
+import responses
 
 app = Flask(__name__)
 
@@ -22,6 +23,9 @@ def get_quote():
 	# TODO Parse the message from slack.
 	app.logger.info(request.form)
 	if(app.config['VERIFICATION_TOKEN'] == request.form['token']):
+		#TODO use a dictionary to map to functions in responses.py
+		if(request.form['text'] == 'help'):
+			return responses.help_msg()
 		return jsonify(
 				text="Hello, <@" + request.form['user_id'] +">. Message recieved.",
 				response_type="in_channel"
