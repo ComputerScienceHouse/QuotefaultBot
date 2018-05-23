@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, request
+from flask import Flask, request, abort
 import os
 
 app = Flask(__name__)
@@ -21,6 +21,10 @@ def get_quote():
 	"""
 	# TODO Parse the message from slack.
 	app.logger.info(request.form)
+	if(app.config['VERIFICATION_TOKEN'] == request.form['token']):
+		return "Hello, <@" + request.form['user_id'] +">. Message recieved."
+	else:
+		abort(401)
 
 
 if __name__ == '__main__':
