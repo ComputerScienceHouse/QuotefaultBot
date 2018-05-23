@@ -1,4 +1,8 @@
 from flask import jsonify
+from app import app
+import requests
+
+url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
 
 def help_msg():
 	return jsonify(
@@ -8,3 +12,13 @@ def help_msg():
 			+ "`random` - grabs a random quote and posts it to the current channel",
 			response_type="ephemeral"
 			)
+
+def random():
+	response = requests.get(url + '/random').json()
+	return jsonify(
+			text = '> ' + response['quote'] + '\n-' + response['speaker'] + '\nSubmitted by: ' + response['submitter'],
+			response_type="in_channel"
+			)
+
+
+

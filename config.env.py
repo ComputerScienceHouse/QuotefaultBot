@@ -7,7 +7,7 @@ PORT = os.environ.get('API_PORT', 8080)
 SERVER_NAME = os.environ.get('API_SERVER_NAME', 'quotefault-bot.csh.rit.edu')
 
 # Quotefault API config
-QUOUTEFAULT_ADDR = os.environ.get('QUOTEFAULT_API_ADDR', 'quotefault-api.csh.rit.edu')
+QUOTEFAULT_ADDR = os.environ.get('QUOTEFAULT_API_ADDR', 'quotefault-api.csh.rit.edu')
 QUOTEFAULT_KEY = os.environ.get('QUOTEFAULT_API_KEY', '')
 
 # Slack creds
