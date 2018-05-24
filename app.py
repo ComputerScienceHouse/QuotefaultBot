@@ -20,19 +20,16 @@ def get_quote():
 	Replies with a random quote.
 	:return: The reply message
 	"""
-	# TODO Parse the message from slack.
 	app.logger.info(request.form)
 	if(app.config['VERIFICATION_TOKEN'] == request.form['token']):
 		command = request.form['text'].split(' ')[0]
 		#TODO use a dictionary to map to functions in responses.py
 		if(command == 'help'):
-			return responses.help_msg()
+			return responses.help_msg('')
 		elif(command == 'random'):
 			return responses.random();
-		return jsonify(
-				text="Hello, <@" + request.form['user_id'] +">. Message recieved.",
-				response_type="in_channel"
-				)
+		else:
+			return responses.help_msg(command)
 	else:
 		abort(401)
 

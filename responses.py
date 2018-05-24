@@ -4,9 +4,11 @@ import requests
 
 url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
 
-def help_msg():
+def help_msg(command: str):
+	wrong = '_Unrecognized: ' + command + '_\n\n' if command != '' else ''
+		
 	return jsonify(
-			text = "Help for CSH Quotefault bot.\n"
+			text = wrong + "Help for CSH Quotefault bot.\n"
 			+ "All commands are in the form `/quote command_name [data and arguements]`\n\n"
 			+ "`help` - displays this message\n"
 			+ "`random` - grabs a random quote and posts it to the current channel",
