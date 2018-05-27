@@ -17,7 +17,7 @@ def index():
 @app.route('/quote', methods=['POST'])
 def get_quote():
 	"""
-	Replies with a random quote.
+	Replies with a auote
 	:return: The reply message
 	"""
 	app.logger.info(request.form) # Debug
@@ -28,6 +28,8 @@ def get_quote():
 			return responses.help_msg('')
 		elif(command == 'random'):
 			return responses.random(request.form['text']);
+		elif(command == 'first'):
+			return responses.first(request.firm['text']);
 		else:
 			return responses.help_msg(command)
 	else:
