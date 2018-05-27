@@ -15,8 +15,8 @@ def help_msg(command: str):
             + "`random` - grabs a random quote and posts it to the current channel.\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
-            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'"
-            + "`first` - grabs the first quote and posts it to the current channel.\n"
+            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'\n"
+            + "`newest` - grabs the newest quote and posts it to the current channel.\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
             + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'",  
@@ -50,7 +50,7 @@ def random(request: str):
                 response_type = 'ephemeral'
                 )
 
-def first(request: str):
+def newest(request: str):
     command = request.split(' ')
     submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
     date = command[command.index('--date') + 1] if '--date' in command else ''
@@ -64,7 +64,7 @@ def first(request: str):
         if date:
             query += 'date=' + date
     try:
-        response = requests.get(url + '/first' + query).json()
+        response = requests.get(url + '/newest' + query).json()
         app.logger.info(response) # Debug
         return jsonify(
                 text = '> ' + response['quote'] + '\n-' + response['speaker'] + '\nSubmitted by: ' + response['submitter'],

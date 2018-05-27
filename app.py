@@ -28,8 +28,8 @@ def get_quote():
             return responses.help_msg('')
         elif(command == 'random'):
             return responses.random(request.form['text'])
-        elif(command == 'first'):
-            return responses.first(request.firm['text'])
+        elif(command == 'newest'):
+            return responses.newest(request.form['text'])
         else:
             return responses.help_msg(command)
     else:
