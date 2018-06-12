@@ -10,6 +10,8 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
+singles = ['random', 'newest']
+
 @app.route('/')
 def index():
     return "Hello World!"
@@ -26,10 +28,8 @@ def get_quote():
         # TODO use a dictionary to map to functions in responses.py
         if(command == 'help'):
             return responses.help_msg('')
-        elif(command == 'random'):
-            return responses.random(request.form['text'])
-        elif(command == 'newest'):
-            return responses.newest(request.form['text'])
+        elif(command in singles):
+            return responses.single(request.form['text'])
         else:
             return responses.help_msg(command)
     else:

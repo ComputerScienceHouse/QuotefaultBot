@@ -23,7 +23,7 @@ def help_msg(command: str):
             response_type="ephemeral"
             )
 
-def random(request: str):
+def single(request: str):
     command = request.split(' ')
     submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
     date = command[command.index('--date') + 1] if '--date' in command else ''
@@ -37,34 +37,8 @@ def random(request: str):
         if date:
             query += 'date=' + date
     try:
-        response = requests.get(url + '/random' + query).json()
-        app.logger.info(response) # Debug
-        return jsonify(
-                text = '> ' + response['quote'] + '\n-' + response['speaker'] + '\nSubmitted by: ' + response['submitter'],
-                response_type="in_channel"
-                )
-    except:
-        app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
-        return jsonify(
-                text = 'Failed to query quotefault. Please try again. If that fails, message user:mom',
-                response_type = 'ephemeral'
-                )
-
-def newest(request: str):
-    command = request.split(' ')
-    submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
-    date = command[command.index('--date') + 1] if '--date' in command else ''
-    query = ''
-    if date or submitter:
-        query += '?'
-        if submitter:
-            query += 'submitter=' + submitter
-            if date:
-                query += '&'
-        if date:
-            query += 'date=' + date
-    try:
-        response = requests.get(url + '/newest' + query).json()
+        print('Request URL: ' + url + '/' + command[0] + query)
+        response = requests.get(url + '/' + command[0] + query).json()
         app.logger.info(response) # Debug
         return jsonify(
                 text = '> ' + response['quote'] + '\n-' + response['speaker'] + '\nSubmitted by: ' + response['submitter'],
