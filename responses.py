@@ -37,12 +37,19 @@ def single(request: str):
         if date:
             query += 'date=' + date
     try:
-        print('Request URL: ' + url + '/' + command[0] + query)
-        response = requests.get(url + '/' + command[0] + query).json()
+        print('Request URL: ' + url + '/' + command[0] + query) # Debug
+        response = requests.get(url + '/' + command[0] + query)
         app.logger.info(response) # Debug
+        if response.text == "none":
+            return jsonify(
+                    text = 'No quotes found, sorry.',
+                    response_type = 'ephemeral'
+                    )
+        json = response.json()
+        app.logger.info(json) # Debug
         return jsonify(
-                text = '> ' + response['quote'] + '\n-' + response['speaker'] + '\nSubmitted by: ' + response['submitter'],
-                response_type="in_channel"
+                text = '> ' + json['quote'] + '\n-' + json['speaker'] + '\nSubmitted by: ' + json['submitter'],
+                response_type = 'in_channel'
                 )
     except:
         app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
