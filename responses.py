@@ -16,26 +16,33 @@ def help_msg(command: str):
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
             + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'\n"
+            + "\tBETA: `--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n"
             + "`newest` - grabs the newest quote and posts it to the current channel.\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
-            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'",  
-            response_type="ephemeral"
+            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'"
+            + "\tBETA: `--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n",
+            response_type = 'ephemeral'
             )
 
 def single(request: str):
     command = request.split(' ')
     submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
     date = command[command.index('--date') + 1] if '--date' in command else ''
+    speaker = command[command.index('--speaker') + 1] if '--speaker' in command else ''
     query = ''
-    if date or submitter:
+    if date or submitter or speaker:
         query += '?'
         if submitter:
             query += 'submitter=' + submitter
-            if date:
+            if date or speaker:
                 query += '&'
         if date:
             query += 'date=' + date
+            if speaker:
+                query += '&'
+        if speaker:
+            query += 'speaker=' + speaker
     try:
         print('Request URL: ' + url + '/' + command[0] + query) # Debug
         response = requests.get(url + '/' + command[0] + query)
