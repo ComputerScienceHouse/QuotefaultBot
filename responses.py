@@ -13,15 +13,14 @@ def help_msg(command: str):
             + "All commands are in the form `/quote command_name [data and arguements]`\n\n"
             + "`help` - displays this message\n"
             + "`random` - grabs a random quote and posts it to the current channel.\n"
-            + "Arguements:\n"
-            + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
             + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'\n"
-            + "\tBETA: `--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n"
             + "`newest` - grabs the newest quote and posts it to the current channel.\n"
+            + "*[WIP]*`between` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.\n"
+            + "`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.\n\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
-            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'"
-            + "\tBETA: `--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n",
+            + "\t`--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n"
+            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY' Not useable for `between`\n",
             response_type = 'ephemeral'
             )
 
