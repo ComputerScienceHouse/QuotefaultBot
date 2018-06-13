@@ -11,6 +11,7 @@ else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
 singles = ['random', 'newest']
+multiples = ['between', 'all']
 
 @app.route('/')
 def index():
@@ -30,6 +31,8 @@ def get_quote():
             return responses.help_msg('')
         elif(command in singles):
             return responses.single(request.form['text'])
+        elif command in multiples:
+            return responses.multiple(request.form['text'])
         else:
             return responses.help_msg(command)
     else:

@@ -65,3 +65,48 @@ def single(request: str):
                 response_type = 'ephemeral'
                 )
 
+def multiple(request: str):
+    command = request.split(' ')
+    submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
+    date = command[command.index('--date') + 1] if '--date' in command else ''
+    speaker = command[command.index('--speaker') + 1] if '--speaker' in command else ''
+    if command[0] == 'between':
+        date = ''
+    query = ''
+    if date or submitter or speaker:
+        query += '?'
+        if submitter:
+            query += 'submitter=' + submitter
+            if date or speaker:
+                query += '&'
+        if date:
+            query += 'date=' + date
+            if speaker:
+                query += '&'
+        if speaker:
+            query += 'speaker=' + speaker
+    try:
+        print('Request URL: ' + url + '/' + command[0] + query) # Debug
+        response = requests.get(url + '/' + command[0] + query)
+        app.logger.info(response) # Debug
+        if response.text == "none":
+            return jsonify(
+                    text = 'No quotes found, sorry.',
+                    response_type = 'ephemeral'
+                    )
+        json = response.json()
+        app.logger.info(json) # Debug
+        big_text = ''
+        for i in json:
+            big_text += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
+        return jsonify(
+                text = big_text,
+                #response_type = 'in_channel'
+                response_type = 'ephemeral'
+                )
+    except:
+        app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
+        return jsonify(
+                text = 'Failed to query quotefault. Please try again. If that fails, message user:mom',
+                response_type = 'ephemeral'
+                )
