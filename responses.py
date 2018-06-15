@@ -78,9 +78,6 @@ def request(command: str, params: dict, args: dict):
         response = requests.get(url + '/' + command + query)
         print('Response:\n')
         app.app.logger.info(response)
-        print(response)
-        print(response.text) # Temp
-        print(response.json()) #temp
         return response
     except:
         app.app.logger.warning('Error:\n' + traceback.format_exc() + '\n\n')
@@ -93,7 +90,6 @@ def make_slack_msg(quotes, multiple: bool):
             msg += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
     else:
         msg = '> ' + quotes['quote'] + '\n-' + quotes['speaker'] + '\nSubmitted by: ' + quotes['submitter']
-    print(msg) #temp
     return jsonify(
             text = msg,
             response_type = 'ephemeral' if multiple else 'in_channel'
