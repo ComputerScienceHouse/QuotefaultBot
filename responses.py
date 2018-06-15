@@ -13,9 +13,8 @@ def help_msg(command: str):
             + "All commands are in the form `/quote command_name [data and arguements]`\n\n"
             + "`help` - displays this message\n"
             + "`random` - grabs a random quote and posts it to the current channel.\n"
-            + "\t`--date [date]` - limits search by date. 'MM-DD-YYYY'\n"
             + "`newest` - grabs the newest quote and posts it to the current channel.\n"
-            + "*[WIP]*`between` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.\n"
+            + "`between <start> <end>` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.\n"
             + "`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.\n\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
@@ -69,9 +68,10 @@ def multiple(request: str):
     submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
     date = command[command.index('--date') + 1] if '--date' in command else ''
     speaker = command[command.index('--speaker') + 1] if '--speaker' in command else ''
+    query = ''
     if command[0] == 'between':
         date = ''
-    query = ''
+        query = '/' + command[1] + '/' + command[2]
     if date or submitter or speaker:
         query += '?'
         if submitter:
@@ -100,8 +100,7 @@ def multiple(request: str):
             big_text += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
         return jsonify(
                 text = big_text,
-                #response_type = 'in_channel'
-                response_type = 'ephemeral'
+                response_type = 'ephemeral' # If responding with multiple quotes, we don't want to clog channels.
                 )
     except:
         app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
