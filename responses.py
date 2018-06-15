@@ -28,7 +28,7 @@ def respond(slack_request: str):
     command = message[0]
 
     params = {}
-    if command is 'between': 
+    if command == 'between': 
         # TODO add validation and error check
         params['start'] = message[1]
         params['end'] = message[2]
@@ -39,14 +39,14 @@ def respond(slack_request: str):
     args['speaker'] = parse_arg(message, 'speaker')
 
     response = request(command, params, args)
-    if response is 'err':
+    if response == 'err':
         # No response error message
         return jsonify(
                 text = 'Failed to query quotefault. Please try again.'
                 + 'If that fails, message user:mom',
                 response_type = 'ephemeral'
                 )
-    elif response.text is 'none':
+    elif response.text == 'none':
         # No quotes found error message
         return jsonify(
                 text = 'No quotes found, sorry.',
