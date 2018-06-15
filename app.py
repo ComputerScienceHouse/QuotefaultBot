@@ -23,16 +23,14 @@ def get_quote():
     Replies with a auote
     :return: The reply message
     """
+    app.logger.info('Request recieved:')
     app.logger.info(request.form) # Debug
     if(app.config['VERIFICATION_TOKEN'] == request.form['token']):
         command = request.form['text'].split(' ')[0]
-        # TODO use a dictionary to map to functions in responses.py
         if(command == 'help'):
             return responses.help_msg('')
-        elif(command in singles):
-            return responses.single(request.form['text'])
-        elif command in multiples:
-            return responses.multiple(request.form['text'])
+        elif(command in singles + multiples):
+            return responses.respond(request.form['text'])
         else:
             return responses.help_msg(command)
     else:

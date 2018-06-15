@@ -1,9 +1,9 @@
 from flask import jsonify
-from app import app
+import app
 import requests
 import traceback
 
-url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
+url = app.app.config['QUOTEFAULT_ADDR'] + '/' + app.app.config['QUOTEFAULT_KEY']
 
 def help_msg(command: str):
     wrong = '_Unrecognized: ' + command + '_\n\n' if command != '' else ''
@@ -23,88 +23,83 @@ def help_msg(command: str):
             response_type = 'ephemeral'
             )
 
-def single(request: str):
-    command = request.split(' ')
-    submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
-    date = command[command.index('--date') + 1] if '--date' in command else ''
-    speaker = command[command.index('--speaker') + 1] if '--speaker' in command else ''
-    query = ''
-    if date or submitter or speaker:
-        query += '?'
-        if submitter:
-            query += 'submitter=' + submitter
-            if date or speaker:
-                query += '&'
-        if date:
-            query += 'date=' + date
-            if speaker:
-                query += '&'
-        if speaker:
-            query += 'speaker=' + speaker
-    try:
-        print('Request URL: ' + url + '/' + command[0] + query) # Debug
-        response = requests.get(url + '/' + command[0] + query)
-        app.logger.info(response) # Debug
-        if response.text == "none":
-            return jsonify(
-                    text = 'No quotes found, sorry.',
-                    response_type = 'ephemeral'
-                    )
-        json = response.json()
-        app.logger.info(json) # Debug
-        return jsonify(
-                text = '> ' + json['quote'] + '\n-' + json['speaker'] + '\nSubmitted by: ' + json['submitter'],
-                response_type = 'in_channel'
-                )
-    except:
-        app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
-        return jsonify(
-                text = 'Failed to query quotefault. Please try again. If that fails, message user:mom',
-                response_type = 'ephemeral'
-                )
+def respond(slack_request: str):
+    message = slack_request.split(' ')
+    command = message[0]
 
-def multiple(request: str):
-    command = request.split(' ')
-    submitter = command[command.index('--submitter') + 1] if '--submitter' in command else ''
-    date = command[command.index('--date') + 1] if '--date' in command else ''
-    speaker = command[command.index('--speaker') + 1] if '--speaker' in command else ''
-    query = ''
-    if command[0] == 'between':
-        date = ''
-        query = '/' + command[1] + '/' + command[2]
-    if date or submitter or speaker:
-        query += '?'
-        if submitter:
-            query += 'submitter=' + submitter
-            if date or speaker:
-                query += '&'
-        if date:
-            query += 'date=' + date
-            if speaker:
-                query += '&'
-        if speaker:
-            query += 'speaker=' + speaker
-    try:
-        print('Request URL: ' + url + '/' + command[0] + query) # Debug
-        response = requests.get(url + '/' + command[0] + query)
-        app.logger.info(response) # Debug
-        if response.text == "none":
-            return jsonify(
-                    text = 'No quotes found, sorry.',
-                    response_type = 'ephemeral'
-                    )
-        json = response.json()
-        app.logger.info(json) # Debug
-        big_text = ''
-        for i in json:
-            big_text += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
+    params = {}
+    if command is 'between': 
+        # TODO add validation and error check
+        params['start'] = message[1]
+        params['end'] = message[2]
+
+    args = {}
+    args['submitter'] = parse_arg(message, 'submitter')
+    args['date'] = parse_arg(message, 'date')
+    args['speaker'] = parse_arg(message, 'speaker')
+
+    response = request(command, params, args)
+    if response is 'err':
+        # No response error message
         return jsonify(
-                text = big_text,
-                response_type = 'ephemeral' # If responding with multiple quotes, we don't want to clog channels.
-                )
-    except:
-        app.logger.warning('Query: "' + request + '", requests to API failed.\nError: ' + traceback.format_exc())
-        return jsonify(
-                text = 'Failed to query quotefault. Please try again. If that fails, message user:mom',
+                text = 'Failed to query quotefault. Please try again.'
+                + 'If that fails, message user:mom',
                 response_type = 'ephemeral'
                 )
+    elif response.text is 'none':
+        # No quotes found error message
+        return jsonify(
+                text = 'No quotes found, sorry.',
+                response_type = 'ephemeral'
+                )
+    else:
+        return make_slack_msg(response.json(), command in app.multiples)
+
+
+def request(command: str, params: dict, args: dict):
+    query = ''
+    if command == 'between':
+        args['date'] = ''
+        command += '/' + params['start'] + '/' + params['end']
+    if args['date'] or args['submitter'] or args['speaker']:
+        query += '?'
+        if args['submitter']:
+            query += 'submitter=' + args['submitter']
+            if args['date'] or args['speaker']:
+                query += '&'
+        if args['date']:
+            query += 'date=' + args['date']
+            if args['speaker']:
+                query += '&'
+        if args['speaker']:
+            query += 'speaker=' + args['speaker']
+    try:
+        print('Request URL: ' + url + '/' + command + query) # Debug
+        response = requests.get(url + '/' + command + query)
+        print('Response:\n')
+        app.app.logger.info(response)
+        print(response)
+        print(response.text) # Temp
+        print(response.json()) #temp
+        return response
+    except:
+        app.app.logger.warning('Error:\n' + traceback.format_exc() + '\n\n')
+        return 'err'
+
+def make_slack_msg(quotes, multiple: bool):    
+    msg = ''
+    if multiple:
+        for i in quotes:
+            msg += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
+    else:
+        msg = '> ' + quotes['quote'] + '\n-' + quotes['speaker'] + '\nSubmitted by: ' + quotes['submitter']
+    print(msg) #temp
+    return jsonify(
+            text = msg,
+            response_type = 'ephemeral' if multiple else 'in_channel'
+            # If responding with multiple quotes, we don't want to clog channels.
+           )
+ 
+def parse_arg(message: list, arg: str):
+    return message[message.index('--' + arg) + 1] if '--' + arg in message else ''
+
