@@ -2,6 +2,7 @@ from flask import jsonify
 import app
 import requests
 import traceback
+import ldap
 
 url = app.app.config['QUOTEFAULT_ADDR'] + '/' + app.app.config['QUOTEFAULT_KEY']
 
@@ -87,9 +88,9 @@ def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
         for i in quotes:
-            msg += '> ' + i['quote'] + '\n-' + i['speaker'] + '\nSubmitted by: ' + i['submitter'] + '\n'
+            msg += '> ' + i['quote'] + '\n-' + resolve_name(i['speaker']) + '\nSubmitted by: ' + resolve_name(i['submitter']) + '\n'
     else:
-        msg = '> ' + quotes['quote'] + '\n-' + quotes['speaker'] + '\nSubmitted by: ' + quotes['submitter']
+        msg = '> ' + quotes['quote'] + '\n-' + resolve_name(quotes['speaker']) + '\nSubmitted by: ' + resolve_name(quotes['submitter'])
     return jsonify(
             text = msg,
             response_type = 'ephemeral' if multiple else 'in_channel'

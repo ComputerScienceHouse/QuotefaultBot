@@ -14,3 +14,7 @@ QUOTEFAULT_KEY = os.environ.get('QUOTEFAULT_API_KEY', '')
 CLIENT_ID = os.environ.get('SLACK_CLIENT_ID', '');
 CLIENT_SECRET = os.environ.get('SLACK_CLIENT_SECRET', '')
 VERIFICATION_TOKEN = os.environ.get('SLACK_VERIFICATION_TOKEN', '')
+
+# CSH LDAP creds
+LDAP_BIND_DN = os.environ.get('LDAP_BIND_DN', '')
+LDAP_BIND_PASS = os.environ.get('LDAP_BIND_PASS', '')
