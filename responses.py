@@ -2,7 +2,7 @@ from flask import jsonify
 import app
 import requests
 import traceback
-import ldap_utils
+from ldap_utils import resolve_name
 
 url = app.app.config['QUOTEFAULT_ADDR'] + '/' + app.app.config['QUOTEFAULT_KEY']
 
