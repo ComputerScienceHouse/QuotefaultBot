@@ -1,7 +1,7 @@
 #!flask/bin/python
 from flask import Flask, request, abort
 import os
-import responses
+import csh_ldap
 
 app = Flask(__name__)
 
@@ -10,8 +10,13 @@ if os.path.exists(os.path.join(os.getcwd(), "config.py")):
 else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
+#LDAP
+_ldap = csh_ldap.CSHLDAP(app.config['LDAP_BIND_DN'], app.config['LDAP_BIND_PASS'])
+
 singles = ['random', 'newest']
 multiples = ['between', 'all']
+
+import responses
 
 @app.route('/')
 def index():
