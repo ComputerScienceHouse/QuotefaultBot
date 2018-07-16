@@ -16,7 +16,8 @@ def help_msg(command: str):
             + "`random` - grabs a random quote and posts it to the current channel.\n"
             + "`newest` - grabs the newest quote and posts it to the current channel.\n"
             + "`between <start> <end>` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.\n"
-            + "`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.\n\n"
+            + "`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.\n"
+            + "`id <qoute_id>` - responds with the specified quote, ignores arguements.\n\n"
             + "Arguements:\n"
             + "\t`--submitter [username]` - limit search to a specific submitter by CSH username\n"
             + "\t`--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.\n"
@@ -33,6 +34,8 @@ def respond(slack_request: str):
         # TODO add validation and error check
         params['start'] = message[1]
         params['end'] = message[2]
+    if command == 'id':
+        params['id'] = message[1]
 
     args = {}
     args['submitter'] = parse_arg(message, 'submitter')
@@ -62,6 +65,8 @@ def request(command: str, params: dict, args: dict):
     if command == 'between':
         args['date'] = ''
         command += '/' + params['start'] + '/' + params['end']
+    if command == 'id':
+        command = params['id']
     if args['date'] or args['submitter'] or args['speaker']:
         query += '?'
         if args['submitter']:
@@ -88,9 +93,9 @@ def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
         for i in quotes:
-            msg += '> ' + i['quote'] + '\n-' + resolve_name(i['speaker']) + '\nSubmitted by: ' + resolve_name(i['submitter']) + '\n'
+            msg += 'Quote #' + str(i['id']) + '\n> ' + i['quote'] + '\n-' + resolve_name(i['speaker']) + '\nSubmitted by: ' + resolve_name(i['submitter']) + '\n'
     else:
-        msg = '> ' + quotes['quote'] + '\n-' + resolve_name(quotes['speaker']) + '\nSubmitted by: ' + resolve_name(quotes['submitter'])
+        msg = 'Quote #' + str(quotes['id']) + '\n> ' + quotes['quote'] + '\n-' + resolve_name(quotes['speaker']) + '\nSubmitted by: ' + resolve_name(quotes['submitter'])
     return jsonify(
             text = msg,
             response_type = 'ephemeral' if multiple else 'in_channel'

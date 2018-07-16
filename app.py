@@ -13,7 +13,7 @@ else:
 #LDAP
 _ldap = csh_ldap.CSHLDAP(app.config['LDAP_BIND_DN'], app.config['LDAP_BIND_PASS'])
 
-singles = ['random', 'newest']
+singles = ['random', 'newest', 'id']
 multiples = ['between', 'all']
 
 import responses
