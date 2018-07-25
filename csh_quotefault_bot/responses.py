@@ -91,7 +91,7 @@ def request(command: str, params: dict, args: dict):
     try:
         print('Request URL: ' + url + '/' + command + query) # Debug
         response = requests.get(url + '/' + command + query)
-        print('Response:\n' + response)
+        #print('Response:\n' + response)
         # app.logger.info(response)
         return response
     except: # pylint: disable=bare-except
@@ -103,12 +103,13 @@ def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
         for i in quotes:
-            msg += ('Quote #' + i['id']
+            msg += ('Quote #' + str(i['id']) + '\n'
                     + '> ' + i['quote'] + '\n'
                     + '-' + resolve_name(i['speaker']) + '\n'
                     + 'Submitted by: ' + resolve_name(i['submitter']) + '\n')
     else:
-        msg = ('Quote #' + i['id']
+        print(quotes)
+        msg = ('Quote #' + str(quotes['id']) + '\n'
                 + '> ' + quotes['quote'] + '\n'
                 + '-' + resolve_name(quotes['speaker']) + '\n'
                 + 'Submitted by: ' + resolve_name(quotes['submitter']))
