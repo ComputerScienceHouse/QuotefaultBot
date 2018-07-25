@@ -1,3 +1,4 @@
 Flask
 Responses
 csh_ldap==2.0.2
+pylint
