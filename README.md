@@ -1,6 +1,12 @@
 # CSH Quotefault Bot
 A Flask Slack bot API to interface with CSH Quotefault.
 
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Travis](https://travis-ci.org/mxmeinhold/csh-quotefault-bot.svg?branch=master)](https://travis-ci.org/mxmeinhold/csh-quotefault-bot)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mxmeinhold/csh-quotefault-bot/blob/master/LICENSE)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](https://github.com/mxmeinhold/csh-quotefault-bot/issues)
+
+
 ## What's Quotefault?
 [Quotefault](https://github.com/dantayy/quotefault) is a webservice to allow users to submit quotes from other members, and to allow viewing of submitted quotes.
 
