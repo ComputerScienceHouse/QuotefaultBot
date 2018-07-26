@@ -5,4 +5,6 @@ python:
 install:
   - "pip install -r requirements.txt"
 script:
-    - "pylint csh_quotefault_bot"
+  - "pylint csh_quotefault_bot"
+notifications:
+  email: false
