@@ -103,16 +103,17 @@ def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
         for i in quotes:
-            msg += ('Quote #' + str(i['id']) + '\n'
-                    + '> ' + i['quote'] + '\n'
-                    + '-' + resolve_name(i['speaker']) + '\n'
-                    + 'Submitted by: ' + resolve_name(i['submitter']) + '\n')
+            msg += f'''Quote #{i['id']}
+> {i['quote']}
+-{resolve_name(i['speaker'])}
+Submitted by: {resolve_name(i['submitter'])}
+'''
     else:
         print(quotes)
-        msg = ('Quote #' + str(quotes['id']) + '\n'
-                + '> ' + quotes['quote'] + '\n'
-                + '-' + resolve_name(quotes['speaker']) + '\n'
-                + 'Submitted by: ' + resolve_name(quotes['submitter']))
+        msg = f'''Quote #{quotes['id']}
+> {quotes['quote']}
+-{resolve_name(quotes['speaker'])}
+Submitted by: {resolve_name(quotes['submitter'])}'''
     return jsonify(
             text=msg,
             response_type='ephemeral' if multiple else 'in_channel'
