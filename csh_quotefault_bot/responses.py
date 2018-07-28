@@ -127,9 +127,9 @@ You can set that at https://cshrit.slack.com/account/settings#email'''
         return f'''`#{speaker}` does not appear to be a CSH username.
 Please correct this and try again.'''
 
-    #res = requests.put(url, json=jsonify(quote=quote, submitter=uid, speaker=speaker))
-    return jsonify(quote=quote, submitter=uid, speaker=speaker)
-    #return "You're getting the raw API response, at least until I make it fancy\n\n" + res.text
+    res = requests.put(url + '/create', json=jsonify(quote=quote, submitter=uid, speaker=speaker))
+    #return jsonify(quote=quote, submitter=uid, speaker=speaker) # DEBUG
+    return "You're getting the raw API response, at least until I make it fancy\n\n" + res.text
 
 def make_slack_msg(quotes, multiple: bool):
     msg = ''
