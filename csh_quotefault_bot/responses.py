@@ -7,12 +7,15 @@ from csh_quotefault_bot.ldap_utils import resolve_name
 
 url = ''
 multiples = []
+OAUTH_ID = ''
 
-def init(addr: str, multi: list):
+def init(addr: str, multi: list, oauth: str):
     global url
-    url = addr
     global multiples
+    global OAUTH_ID
+    url = addr
     multiples = multi
+    OAUTH_ID = oauth
 
 def help_msg(command: str):
     wrong = '_Unrecognized: ' + command + '_\n\n' if command != '' else ''
@@ -99,6 +102,30 @@ def request(command: str, params: dict, args: dict):
         print('Error:\n' + traceback.format_exc() + '\n\n')
         return 'err'
 
+def submission(text: str, user_name: str):
+    addr = 'https://slack.com/api/users.profile.get?'
+    addr += 'token=' + OAUTH_ID + '&user=' + user_name
+    res = requests.get(addr)
+    print(res.json())
+    email = res.json()['profile']['email']
+    if '@csh.rit.edu' in email:
+        uid = email.split('@')[0]
+    else:
+        return '''Could not find your CSH username.
+Please set your email to your CSH email at https://cshrit.slack.com/account/settings#email'''
+    if resolve_name(uid) == uid:
+        return '''Your email on Slack seems to be an alias.
+Please use your base email so I can verify your identity.
+You can set that at https://cshrit.slack.com/account/settings#email'''
+
+    text = text.replace('“', '"').replace('”', '"')
+    quote = substring(text, 'quote="', '"')
+    speaker = substring(text, 'speaker="', '"')
+
+    #res = requests.put(url, json=jsonify(quote=quote, submitter=uid, speaker=speaker))
+    return jsonify(quote=quote, submitter=uid, speaker=speaker)
+    #return "You're getting the raw API response, at least until I make it fancy\n\n" + res.text
+
 def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
@@ -122,3 +149,8 @@ Submitted by: {resolve_name(quotes['submitter'])}'''
 
 def parse_arg(message: list, arg: str):
     return message[message.index('--' + arg) + 1] if '--' + arg in message else ''
+
+def substring(text: str, start: str, end: str):
+    start_i = text.index(start) + len(start)
+    end_i = text.index(end, start_i)
+    return text[start_i:end_i]

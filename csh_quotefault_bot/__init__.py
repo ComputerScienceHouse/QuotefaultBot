@@ -16,10 +16,11 @@ ldap_utils.init(_ldap)
 
 singles = ['random', 'newest', 'id']
 multiples = ['between', 'all']
+others = ['submit']
 
 _url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
 
-responses.init(_url, multiples)
+responses.init(_url, multiples, app.config['OAUTH_TOKEN'])
 
 @app.route('/')
 def index():
@@ -39,5 +40,7 @@ def get_quote(): # pylint: disable=inconsistent-return-statements
             return responses.help_msg('')
         if command in singles + multiples:
             return responses.respond(request.form['text'])
+        if command == 'submit':
+            return responses.submission(request.form['text'], request.form['user_id'])
         return responses.help_msg(command)
     abort(401)
