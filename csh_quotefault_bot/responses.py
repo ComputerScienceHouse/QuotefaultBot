@@ -30,6 +30,7 @@ All commands are in the form `/quote command_name [data and arguements]`
 `between <start> <end>` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.
 `all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.
 `id <qoute_id>` - responds with the specified quote, ignores arguements.
+`submit quote="<quote>" speaker="<speaker>"` - quote is the quote to submit, speaker is the csh username of the speaker of the quote. Does not accept arguements.
 
 Arguements:
     `--submitter [username]` - limit search to a specific submitter by CSH username
@@ -121,6 +122,10 @@ You can set that at https://cshrit.slack.com/account/settings#email'''
     text = text.replace('“', '"').replace('”', '"')
     quote = substring(text, 'quote="', '"')
     speaker = substring(text, 'speaker="', '"')
+
+    if speaker == resolve_name(speaker):
+        return f'''`#{speaker}` does not appear to be a CSH username.
+Please correct this and try again.'''
 
     #res = requests.put(url, json=jsonify(quote=quote, submitter=uid, speaker=speaker))
     return jsonify(quote=quote, submitter=uid, speaker=speaker)
