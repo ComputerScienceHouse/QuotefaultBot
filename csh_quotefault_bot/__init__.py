@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, request, abort
+import requests
 import csh_ldap
 from csh_quotefault_bot import responses, ldap_utils
 
@@ -51,21 +52,21 @@ def do_interact():
     """
     Handles interactive components.
     """
+    data = json.loads(request.form['payload'])
+
     app.logger.info('Interaction recieved:')
-    app.logger.info(request.form) # Debug
-    app.logger.info(json.loads(request.form['payload']))
-            #app.logger.info(request)
-    #app.logger.info(request.get_json(True).get('type'))
+    app.logger.info(data)
 
-    #if request.get_json().get('type') == 'message_action':
-    if json.loads(request.form['payload'])['type'] == 'message_action':
-        err = action(request)
-        if err:
-            return err
-        return "Action request recieved"
-    return request.get_json(True)['type']
+    if data['type'] == 'message_action':
+        action(data)
 
-def action(req):
-    if req:
-        return ''
-    return "Well... You didn't give us anything"
+    return 200
+
+def action(data: dict):# TODO move to responses
+    response_url = data['response_url']
+    submitter = data['user']['id']
+    speaker = data['message']['user']
+    quote = data['message']['text']
+
+    msg = f'"#{quote}" -#{speaker}, submitted by #{submitter}'
+    requests.put(response_url, json={'text':msg, 'response_type':'ephemeral'}) # pylint: disable=undefined-variable
