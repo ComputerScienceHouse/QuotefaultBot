@@ -8,7 +8,11 @@ A Flask Slack bot API to interface with CSH Quotefault.
 
 
 ## What's Quotefault?
-[Quotefault](https://github.com/dantayy/quotefault) is a webservice to allow users to submit quotes from other members, and to allow viewing of submitted quotes.
+[Computer Science House](https://csh.rit.edu) (CSH) has a weekly newsletter named Segfault, which is commonly distributed with an out of context quote from some member.
+Historically, these quotes were submitted by email, but since the email aliases is generally given to a different member every year, there is no central, accessible repository for quotes.
+Because of this, many wonderful quotes are unrecoverable.
+To mitigate this problem, an annual CSH hackathon, [Nicholas Mercadante](https://github.com/dantayy) created [Quotefault](https://github.com/dantayy/quotefault), a service for submitting, storing, and viewing quotes.
+Quotefault has since become quite prevalent, and so during another hackathon, [Skyler Clark](https://github.com/SkylerJaneClark) and [Devin Matté](https://github.com/devinmatte) created the [Quotefault API](https://github.com/ComputerScienceHouse/QuotefaultAPI) to allow more projects to build off of quotefault.
 
 ## How's this built?
 This bot is built in [Python Flask](http://flask.pocoo.org).
@@ -16,14 +20,11 @@ It handles a POST request from Slack, interprets the quote request, and responds
 It uses the [Quotefault API](https://github.com/ComputerScienceHouse/QuotefaultAPI) to interact with the Quotefault database.
 
 ## Why build this?
-I wanted to make a Slack bot, which is as simple as handling web requests.
-Quotefault was a service that had an accessible API and had previously been floated as a possible Slack integration.
-
-I made this in Flask because the last service I made was in [Node](https://nodejs.org/en/) and I wanted to get a taste of Flask.
+This project provided an opportunity to play with [Python Flask](https://flask.pocoo.org) and the [Slack API](https://api.slack.com), and Quotefault had previously been floated as a possible slack integration.
+I wanted a project for the summer, so I 
 
 # Contributing
-
-Contributors welcome! Make a PR, and it will be checked with Travis and pylint. You'll need to make it pass pylint before it can be merged.
+Contributors welcome! Make a PR, and it will be checked with Travis and Pylint. You'll need to make it pass Pylint before it can be merged.
 
 ## Setup
 1. Make sure you have python3 installed ([Here's a guide](https://docs.python-guide.org/starting/installation/#installation-guides))
