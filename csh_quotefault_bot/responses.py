@@ -17,20 +17,20 @@ def help_msg(command: str):
 
     return jsonify(
             text=wrong + '''Help for CSH Quotefault bot.
-All commands are in the form `/quote command_name [data and arguements]`
+All commands are in the form `/quote command_name [data and arguments]`
 
 `help` - displays this message
 `random` - grabs a random quote and posts it to the current channel.
 `newest` - grabs the newest quote and posts it to the current channel.
 `between <start> <end>` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.
-`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguements.
-`id <qoute_id>` - responds with the specified quote, ignores arguements.
-`submit "<quote>" - <speaker>` - quote is the quote to submit, speaker is the csh username of the speaker of the quote. Does not accept arguements.
+`all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguments.
+`id <quote_id>` - responds with the specified quote, ignores arguments.
+`submit "<quote>" - <speaker>` - quote is the quote to submit, speaker is the CSH username of the speaker of the quote. Does not accept arguments.
 
-Arguements:
+Arguments:
     `--submitter [username]` - limit search to a specific submitter by CSH username
     `--speaker [name]` - limits search by speaker. Speaker can be any string, not just a username.
-    `--date [date]` - limits search by date. 'MM-DD-YYYY' Not useable for `between`''',
+    `--date [date]` - limits search by date. 'MM-DD-YYYY' Not useable for `between`.''',
             response_type='ephemeral'
             )
 

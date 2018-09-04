@@ -30,10 +30,10 @@ def index():
 @app.route('/quote', methods=['POST'])
 def get_quote(): # pylint: disable=inconsistent-return-statements
     """
-    Replies with a auote
+    Replies with a quote
     :return: The reply message
     """
-    app.logger.info('Request recieved:')
+    app.logger.info('Request received:')
     app.logger.info(request.form) # Debug
     if app.config['VERIFICATION_TOKEN'] == request.form['token']:
         command = request.form['text'].split(' ')[0]
