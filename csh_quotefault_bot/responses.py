@@ -137,14 +137,19 @@ def markov(text: str):
         query_args = '?' + query_args
     
     url_arg = ''
+    return_type = 'in_channel'
     if len(words) > 1:
         if '-' not in words[1]:
+            if int(words[1]) > 5:
+                return_type = 'ephemeral'
             url_arg = '/' + words[1].strip()
     
     quotes = requests.get(url + '/markov' + url_arg + query_args).json()
+    if type(quotes) is str:
+        quotes = [quotes]
     return jsonify(
             text = "\n".join(quotes),
-            response_type = 'in_channel'
+            response_type = return_type
             )
             
 
