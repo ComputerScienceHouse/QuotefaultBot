@@ -25,6 +25,7 @@ All commands are in the form `/quote command_name [data and arguments]`
 `between <start> <end>` - returns all quotes between `start` and `end`. 'MM-DD-YYYY'.
 `all` - responds with _*Every Single Quote*_. This cuts off at some point, so use arguments.
 `id <quote_id>` - responds with the specified quote, ignores arguments.
+`markov <count>` - responds with a generated quote. Takes speaker and submitter arguements. Count is optional.
 `submit "<quote>" - <speaker>` - quote is the quote to submit, speaker is the CSH username of the speaker of the quote. Does not accept arguments.
 
 Arguments:
@@ -118,6 +119,34 @@ Please correct this and try again.'''
     res = requests.put(url + '/create', json={'quote':quote, 'submitter':user_name, 'speaker':speaker})
     #return jsonify(quote=quote, submitter=uid, speaker=speaker) # DEBUG
     return "You're getting the raw API response, at least until I make it fancy\n\n" + res.text
+
+def markov(text: str):
+    words = text.split()
+
+    speaker = parse_arg(words, 'speaker')
+    submitter = parse_arg(words, 'submitter')
+
+    query_args = ''
+    if speaker is not '':
+        query_args += 'speaker=' + speaker
+    if submitter is not '':
+        if query_args != '':
+            query_args += '&'
+        query_args += 'submitter=' + submitter
+    if query_args != '':
+        query_args = '?' + query_args
+    
+    url_arg = ''
+    if len(words) > 1:
+        if '-' not in words[1]:
+            url_arg = '/' + words[1].strip()
+    
+    quotes = requests.get(url + '/markov' + url_arg + query_args).json()
+    return jsonify(
+            text = "\n".join(quotes),
+            response_type = 'in_channel'
+            )
+            
 
 def make_slack_msg(quotes, multiple: bool):
     msg = ''

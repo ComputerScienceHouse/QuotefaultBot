@@ -17,7 +17,7 @@ ldap_utils.init(_ldap)
 
 singles = ['random', 'newest', 'id']
 multiples = ['between', 'all']
-others = ['submit']
+others = ['submit', 'markoc']
 
 _url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
 
@@ -60,5 +60,7 @@ You can set that at https://cshrit.slack.com/account/settings#email'''
             return responses.respond(request.form['text'])
         if command == 'submit':
             return responses.submission(request.form['text'], uid)
+        if command == 'markov':
+            return responses.markov(request.form['text'])
         return responses.help_msg(command)
     abort(401)
