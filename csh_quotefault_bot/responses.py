@@ -127,15 +127,15 @@ def markov(text: str):
     submitter = parse_arg(words, 'submitter')
 
     query_args = ''
-    if speaker is not '':
+    if speaker is not None:
         query_args += 'speaker=' + speaker
-    if submitter is not '':
+    if submitter is not None:
         if query_args != '':
             query_args += '&'
         query_args += 'submitter=' + submitter
     if query_args != '':
         query_args = '?' + query_args
-    
+
     url_arg = ''
     return_type = 'in_channel'
     if len(words) > 1:
@@ -143,15 +143,15 @@ def markov(text: str):
             if int(words[1]) > 5:
                 return_type = 'ephemeral'
             url_arg = '/' + words[1].strip()
-    
+
     quotes = requests.get(url + '/markov' + url_arg + query_args).json()
-    if type(quotes) is str:
+    if isinstance(quotes, str):
         quotes = [quotes]
     return jsonify(
-            text = "\n".join(quotes),
-            response_type = return_type
+            text="\n".join(quotes),
+            response_type=return_type
             )
-            
+
 
 def make_slack_msg(quotes, multiple: bool):
     msg = ''

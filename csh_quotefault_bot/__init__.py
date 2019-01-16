@@ -28,7 +28,7 @@ def index():
     return "Hello World!"
 
 @app.route('/quote', methods=['POST'])
-def get_quote(): # pylint: disable=inconsistent-return-statements
+def get_quote(): # pylint: disable=inconsistent-return-statements,too-many-return-statements
     """
     Replies with a quote
     :return: The reply message
