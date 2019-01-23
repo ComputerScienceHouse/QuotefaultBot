@@ -1,4 +1,5 @@
 Flask
-Responses
-csh_ldap==2.0.2
+requests
 pylint
+python-ldap==3.0.0
+srvlookup==2.0.0

@@ -1,16 +1,18 @@
 import traceback
 from flask import jsonify
 import requests
-from csh_quotefault_bot.ldap_utils import resolve_name
 
 url = ''
 multiples = []
+_LDAP = None
 
-def init(addr: str, multi: list):
+def init(addr: str, multi: list, ldap):
     global url
     global multiples
+    global _LDAP
     url = addr
     multiples = multi
+    _LDAP = ldap
 
 def help_msg(command: str):
     wrong = '_Unrecognized: ' + command + '_\n\n' if command != '' else ''
@@ -57,7 +59,7 @@ def respond(slack_request: str):
         # No response error message
         return jsonify(
                 text='Failed to query quotefault. Please try again.'
-                + 'If that fails, message user:mom',
+                + 'If that fails, message @mom',
                 response_type='ephemeral'
                 )
     if response.text == 'none':
@@ -112,9 +114,9 @@ def submission(text: str, user_name: str):
         speaker = text[dash+1:].strip()
 
 
-    if speaker == resolve_name(speaker):
-        return f'''`#{speaker}` does not appear to be a CSH username.
-Please correct this and try again.'''
+    status = _LDAP.validate_uid(speaker)[0]
+    if status == 'failure':
+        return f'Could not validate {speaker} as a CSH username.'
 
     res = requests.put(url + '/create', json={'quote':quote, 'submitter':user_name, 'speaker':speaker})
     #return jsonify(quote=quote, submitter=uid, speaker=speaker) # DEBUG
@@ -157,17 +159,36 @@ def make_slack_msg(quotes, multiple: bool):
     msg = ''
     if multiple:
         for i in quotes:
+            speaker = i['speaker']
+            status, result = _LDAP.validate_uid(speaker)
+            if status == 'ok':
+                speaker = f"{result['cn']} ({result['uid']})"
+
+            submitter = i['submitter']
+            status, result = _LDAP.validate_uid(submitter)
+            if status == 'ok':
+                submitter = f"{result['cn']} ({result['uid']})"
+
             msg += f'''Quote #{i['id']}
 > {i['quote']}
--{resolve_name(i['speaker'])}
-Submitted by: {resolve_name(i['submitter'])}
+-{speaker}
+Submitted by: {submitter}
 '''
     else:
+        speaker = quotes['speaker']
+        status, result = _LDAP.validate_uid(speaker)
+        if status == 'ok':
+            speaker = f"{result['cn']} ({result['uid']})"
+
+        submitter = quotes['submitter']
+        status, result = _LDAP.validate_uid(submitter)
+        if status == 'ok':
+            submitter = f"{result['cn']} ({result['uid']})"
         print(quotes)
         msg = f'''Quote #{quotes['id']}
 > {quotes['quote']}
--{resolve_name(quotes['speaker'])}
-Submitted by: {resolve_name(quotes['submitter'])}'''
+-{speaker}
+Submitted by: {submitter}'''
     return jsonify(
             text=msg,
             response_type='ephemeral' if multiple else 'in_channel'

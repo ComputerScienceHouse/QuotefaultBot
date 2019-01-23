@@ -1,7 +1,6 @@
 import os
 from flask import Flask, request, abort
 import requests
-import csh_ldap
 from csh_quotefault_bot import responses, ldap_utils
 
 app = Flask(__name__)
@@ -12,16 +11,15 @@ else:
     app.config.from_pyfile(os.path.join(os.getcwd(), "config.env.py"))
 
 #LDAP
-_ldap = csh_ldap.CSHLDAP(app.config['LDAP_BIND_DN'], app.config['LDAP_BIND_PASS'])
-ldap_utils.init(_ldap)
+_LDAP = ldap_utils.LDAPUtils(app.config['LDAP_BIND_DN'], app.config['LDAP_BIND_PASS'])
 
 singles = ['random', 'newest', 'id']
 multiples = ['between', 'all']
-others = ['submit', 'markoc']
+others = ['submit', 'markov']
 
 _url = app.config['QUOTEFAULT_ADDR'] + '/' + app.config['QUOTEFAULT_KEY']
 
-responses.init(_url, multiples)
+responses.init(_url, multiples, _LDAP)
 
 @app.route('/')
 def index():
@@ -38,28 +36,18 @@ def get_quote(): # pylint: disable=inconsistent-return-statements,too-many-retur
     if app.config['VERIFICATION_TOKEN'] == request.form['token']:
         command = request.form['text'].split(' ')[0]
 
-        # Authenticate.
-        addr = 'https://slack.com/api/users.profile.get?'
-        addr += 'token=' + app.config['OAUTH_TOKEN'] + '&user=' + request.form['user_id']
-        res = requests.get(addr)
-        print(res.json())
-        email = res.json()['profile']['email']
-        if '@csh.rit.edu' in email:
-            uid = email.split('@')[0]
-        else:
-            return '''Could not find your CSH username.
-Please set your email to your CSH email at https://cshrit.slack.com/account/settings#email'''
-        if ldap_utils.resolve_name(uid) == uid:
-            return '''Your email on Slack seems to be an alias.
-Please use your base email so I can verify your identity.
-You can set that at https://cshrit.slack.com/account/settings#email'''
+        # Authenticate
+        slack_id = request.form['user_id']
+        status, result = _LDAP.verify_slack_uid(slack_id)
+        if status == 'failure':
+            return "Could not autenticate you. Migration in progress." # TODO eac link
 
         if command == 'help':
             return responses.help_msg('')
         if command in singles + multiples:
             return responses.respond(request.form['text'])
         if command == 'submit':
-            return responses.submission(request.form['text'], uid)
+            return responses.submission(request.form['text'], result['uid'])
         if command == 'markov':
             return responses.markov(request.form['text'])
         return responses.help_msg(command)
