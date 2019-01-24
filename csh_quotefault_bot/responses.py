@@ -162,12 +162,12 @@ def make_slack_msg(quotes, multiple: bool):
             speaker = i['speaker']
             status, result = _LDAP.validate_uid(speaker)
             if status == 'ok':
-                speaker = f"{result['cn']} ({result['uid']})"
+                speaker = result['name']
 
             submitter = i['submitter']
             status, result = _LDAP.validate_uid(submitter)
             if status == 'ok':
-                submitter = f"{result['cn']} ({result['uid']})"
+                submitter = result['name']
 
             msg += f'''Quote #{i['id']}
 > {i['quote']}
@@ -178,12 +178,12 @@ Submitted by: {submitter}
         speaker = quotes['speaker']
         status, result = _LDAP.validate_uid(speaker)
         if status == 'ok':
-            speaker = f"{result['cn']} ({result['uid']})"
+            speaker = result['name']
 
         submitter = quotes['submitter']
         status, result = _LDAP.validate_uid(submitter)
         if status == 'ok':
-            submitter = f"{result['cn']} ({result['uid']})"
+            submitter = result['name']
         print(quotes)
         msg = f'''Quote #{quotes['id']}
 > {quotes['quote']}

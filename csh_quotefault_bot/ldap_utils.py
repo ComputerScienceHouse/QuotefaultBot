@@ -15,15 +15,14 @@ class LDAPUtils:
         """
         Checks that a uid is valid.
         Returns:
-            ('ok', {'uid': csh_uid, 'cn': name})
+            ('ok', {'name': 'Name (uid)'})
             ('failure', {})
         """
-        search_result = self._ldap.search_s(_BASE, ldap.SCOPE_SUBTREE, "(uid=%s)" % csh_uid, ['uid', 'cn'])
+        search_result = self._ldap.search_s(_BASE, ldap.SCOPE_SUBTREE, "(uid=%s)" % csh_uid, ['displayname'])
         if len(search_result) != 1:
             return ('failure', {})
-        uid = search_result[0][1]['uid'][0].decode("utf-8")
-        cn = search_result[0][1]['cn'][0].decode("utf-8")
-        return ('ok', {'uid':uid, 'cn':cn})
+        name = search_result[0][1]['displayname'][0].decode("utf-8")
+        return ('ok', {'name':name})
 
 
     def verify_slack_uid(self, slack_uid):
