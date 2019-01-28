@@ -40,7 +40,7 @@ def get_quote(): # pylint: disable=inconsistent-return-statements,too-many-retur
         slack_id = request.form['user_id']
         status, result = _LDAP.verify_slack_uid(slack_id)
         if status == 'failure':
-            return "Could not autenticate you. Please visit https://eac.csh.rit.edu/slack"
+            return "Could not autenticate you. Please visit https://eac.csh.rit.edu to link Slack."
 
         if command == 'help':
             return responses.help_msg('')
