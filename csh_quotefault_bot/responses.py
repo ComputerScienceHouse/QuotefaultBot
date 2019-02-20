@@ -129,9 +129,9 @@ def markov(text: str):
     submitter = parse_arg(words, 'submitter')
 
     query_args = ''
-    if speaker is not None:
+    if speaker:
         query_args += 'speaker=' + speaker
-    if submitter is not None:
+    if submitter:
         if query_args != '':
             query_args += '&'
         query_args += 'submitter=' + submitter
