@@ -151,8 +151,20 @@ def markov(text: str):
     quotes = requests.get(url + '/markov' + url_arg + query_args).json()
     if isinstance(quotes, str):
         quotes = [quotes]
+
+    if speaker:
+        status, result = _LDAP.validate_uid(speaker)
+        if status == 'ok':
+            speaker = '\n-' + result['name']
+
+    if submitter:
+        status, result = _LDAP.validate_uid(submitter)
+        if status == 'ok':
+            submitter = '\nSubmitted by: ' + result['name']
+
     return jsonify(
-            text="\n".join(quotes),
+            text="\n".join(f'> {quote}{speaker}{submitter}'
+            + '\nGenerated via Markov chain.' for quote in quotes),
             response_type=return_type
             )
 
