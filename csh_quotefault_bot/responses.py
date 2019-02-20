@@ -138,6 +138,8 @@ def markov(text: str):
     if query_args != '':
         query_args = '?' + query_args
 
+    print('DEBUG: Markov query args :', query_args)
+
     url_arg = ''
     return_type = 'in_channel'
     if len(words) > 1:
